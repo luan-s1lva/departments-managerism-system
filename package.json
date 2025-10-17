@@ -1,0 +1,22 @@
+{
+  "name": "autos",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx nodemon index.js",
+    "clean": "npx prettier . --write",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luan Silva - 20230026023",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "lowdb": "^7.0.1",
+    "prettier": "^3.6.2"
+  }
+}
