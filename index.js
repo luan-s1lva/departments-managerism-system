@@ -5,7 +5,8 @@ import roteadorLogin from "./routes/auth.routes.js";
 import authMiddleware from "./middleware/auth.middleware.js";
 import db from "./config/dbConfig.js";
 import bcrypt from "bcrypt";
-import { resultadosValidacao, userCreationRules } from "./middleware/usuarios.middleware.js";
+import { resultadosValidacao } from "./middleware/validation.middleware.js";
+import { userCreationRules } from "./validators/usuarios.validator.js";
 
 const app = express();
 const PORTA = 3000;

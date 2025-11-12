@@ -1,7 +1,8 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import db from "../config/dbConfig.js";
-import { resultadosValidacao, userRemoveRules, userUpdateRulesPATCH, userUpdateRulesPUT } from "../middleware/usuarios.middleware.js";
+import { resultadosValidacao } from "../middleware/validation.middleware.js";
+import { userRemoveRules, userUpdateRulesPATCH, userUpdateRulesPUT } from "../validators/usuarios.validator.js";
 
 const roteadorUsuarios = Router();
 
@@ -63,7 +64,7 @@ roteadorUsuarios.patch("/editar/:id", userUpdateRulesPATCH(), resultadosValidaca
     usuarioExiste.password = senhaCriptografada;
     usuarioExiste.idDepartamento = idDepartamento;
     usuarioExiste.role = role
-    
+
     await db.write();
 
     delete usuarioExiste.password;
@@ -115,7 +116,7 @@ roteadorUsuarios.get("/buscar/:termoBusca", async (req, res) => {
 
     delete resposta.id;
     delete resposta.password;
-    
+
     res.status(200).json(resposta);
   } catch (error) {
     console.error(error);

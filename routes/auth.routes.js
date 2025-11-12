@@ -2,7 +2,8 @@ import { Router } from "express";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
 import db from "../config/dbConfig.js";
-import { resultadosValidacao, userLoginRules } from "../middleware/usuarios.middleware.js";
+import {userLoginRules } from "../validators/usuarios.validator.js";
+import { resultadosValidacao } from "../middleware/validation.middleware.js";
 
 export const JWTSECRET = "M9Z.Jcp@518>";
 

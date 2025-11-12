@@ -1,7 +1,7 @@
 import db from "../config/dbConfig.js";
 import { Router } from "express";
-import { deptCreationRules, deptRemoveRules, deptUpdateRulesPATCH, deptUpdateRulesPUT } from "../middleware/departamentos.middleware.js";
-import { resultadosValidacao } from "../middleware/usuarios.middleware.js";
+import { deptCreationRules, deptRemoveRules, deptUpdateRulesPATCH, deptUpdateRulesPUT } from "../validators/departamentos.validator.js";
+import { resultadosValidacao } from "../middleware/validation.middleware.js";
 import { checkRole } from "../middleware/permission.middleware.js"
 
 const roteadorDepartamentos = Router();
