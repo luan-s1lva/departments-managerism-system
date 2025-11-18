@@ -1,4 +1,4 @@
 node_modules
 db.json
 package-lock.json
-mongoConfig.js
+dbMongooseConfig.js

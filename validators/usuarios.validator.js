@@ -1,4 +1,8 @@
 import { body, param } from "express-validator";
+import mongoose from "mongoose";
+
+// Função para validar ObjectId do Mongo
+const isObjectId = (value) => mongoose.Types.ObjectId.isValid(value);
 
 // REGRAS DE LOGIN DE USUÁRIOS
 export const userLoginRules = () => {
@@ -7,12 +11,13 @@ export const userLoginRules = () => {
       .isEmail()
       .withMessage("Email inválido")
       .notEmpty()
-      .withMessage("O campo login é obrigatório"),
+      .withMessage("O campo email é obrigatório"),
+
     body("senha")
       .isString()
-      .withMessage("Tente outra senha")
+      .withMessage("Senha inválida")
       .notEmpty()
-      .withMessage("O campo senha é obrigatório"),
+      .withMessage("O campo senha é obrigatório")
   ];
 };
 
@@ -20,85 +25,75 @@ export const userLoginRules = () => {
 export const userCreationRules = () => {
   return [
     body("nome")
-      .isString()
-      .withMessage("Tente outro")
-      .notEmpty()
-      .withMessage("O campo nome é obrigatório"),
+      .notEmpty().withMessage("O campo nome é obrigatório")
+      .isString().withMessage("Nome inválido"),
+
     body("email")
-      .isEmail()
-      .withMessage("Email inválido")
-      .notEmpty()
-      .withMessage("O campo login é obrigatório"),
+      .isEmail().withMessage("Email inválido")
+      .notEmpty().withMessage("O campo email é obrigatório"),
+
     body("password")
-      .isString()
-      .withMessage("Tente outra senha")
-      .notEmpty()
-      .withMessage("O campo senha é obrigatório"),
+      .isString().withMessage("Senha inválida")
+      .notEmpty().withMessage("O campo senha é obrigatório")
   ];
 };
 
-// REGRAS DE ATUALIZAÇÃO DE USUÁRIOS
+// REGRAS DE ATUALIZAÇÃO COMPLETA (PUT)
 export const userUpdateRulesPUT = () => {
   return [
     param("id")
-      .isInt()
-      .withMessage("Tente outro")
-      .notEmpty()
-      .withMessage("O campo id é obrigatório"),
+      .custom(isObjectId)
+      .withMessage("ID inválido"),
+
     body("nome")
-      .isString()
-      .withMessage("Tente outro")
-      .notEmpty()
-      .withMessage("O campo nome é obrigatório"),
+      .notEmpty().withMessage("O campo nome é obrigatório")
+      .isString().withMessage("Nome inválido"),
+
     body("email")
-      .isEmail()
-      .withMessage("Email inválido")
-      .notEmpty()
-      .withMessage("O campo login é obrigatório"),
-    body("senha")
-      .isString()
-      .withMessage("Tente outra senha")
-      .notEmpty()
-      .withMessage("O campo senha é obrigatório"),
+      .isEmail().withMessage("Email inválido")
+      .notEmpty().withMessage("O campo email é obrigatório"),
+
+    body("password")
+      .isString().withMessage("Senha inválida")
+      .notEmpty().withMessage("O campo senha é obrigatório"),
+
     body("idDepartamento")
-      .isInt()
-      .withMessage("Tente outro")
-      .notEmpty()
-      .withMessage("O campo idDepartamento é obrigatório"),
+      .custom(isObjectId)
+      .withMessage("ID de departamento inválido")
   ];
 };
 
+// REGRAS DE ATUALIZAÇÃO PARCIAL (PATCH)
 export const userUpdateRulesPATCH = () => {
   return [
     param("id")
-      .isInt()
-      .withMessage("Tente outro")
-      .optional()
-      .withMessage("O campo id é obrigatório"),
+      .custom(isObjectId)
+      .withMessage("ID inválido"),
+
     body("nome")
-      .isString()
-      .withMessage("Tente outro")
       .optional()
-      .withMessage("O campo nome é obrigatório"),
+      .isString().withMessage("Nome inválido"),
+
     body("email")
-      .isEmail()
-      .withMessage("Email inválido")
       .optional()
-      .withMessage("O campo login é obrigatório"),
-    body("senha")
-      .isString()
-      .withMessage("Tente outra senha")
+      .isEmail().withMessage("Email inválido"),
+
+    body("password")
       .optional()
-      .withMessage("O campo senha é obrigatório"),
+      .isString().withMessage("Senha inválida"),
+
     body("idDepartamento")
-      .isInt()
-      .withMessage("Tente outro")
       .optional()
-      .withMessage("O campo idDepartamento é obrigatório"),
+      .custom(isObjectId)
+      .withMessage("ID de departamento inválido")
   ];
 };
 
 // REGRAS DE DELETAR USUÁRIOS
 export const userRemoveRules = () => {
-  return [param("id").notEmpty().withMessage("O campo id é obrigatório")];
+  return [
+    param("id")
+      .custom(isObjectId)
+      .withMessage("ID inválido")
+  ];
 };
