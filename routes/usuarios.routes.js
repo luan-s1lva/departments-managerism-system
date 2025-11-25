@@ -16,18 +16,18 @@ roteadorUsuarios.post(
   "/",
   userCreationRules(),
   resultadosValidacao,
-  (req, res) => UsuarioController.criar(req, res)
+  (req, res) => UsuarioController.criar(req, res),
 );
 
 roteadorUsuarios.get("/", authMiddleware, checkRole("admin"), (req, res) =>
-  UsuarioController.listar(req, res)
+  UsuarioController.listar(req, res),
 );
 
 roteadorUsuarios.get(
   "/buscar/:id",
   authMiddleware,
   checkRole("admin"),
-  (req, res) => UsuarioController.buscar(req, res)
+  (req, res) => UsuarioController.buscar(req, res),
 );
 
 roteadorUsuarios.put(
@@ -37,7 +37,7 @@ roteadorUsuarios.put(
   checkRole("admin"),
   userUpdateRulesPUT(),
   resultadosValidacao,
-  (req, res) => UsuarioController.atualizar(req, res)
+  (req, res) => UsuarioController.atualizar(req, res),
 );
 
 roteadorUsuarios.patch(
@@ -47,7 +47,7 @@ roteadorUsuarios.patch(
   checkRole("admin"),
   userUpdateRulesPATCH(),
   resultadosValidacao,
-  (req, res) => UsuarioController.atualizar(req, res)
+  (req, res) => UsuarioController.atualizar(req, res),
 );
 
 roteadorUsuarios.delete(
@@ -56,7 +56,7 @@ roteadorUsuarios.delete(
   checkRole("admin"),
   userRemoveRules(),
   resultadosValidacao,
-  (req, res) => UsuarioController.deletar(req, res)
+  (req, res) => UsuarioController.deletar(req, res),
 );
 
 export default roteadorUsuarios;

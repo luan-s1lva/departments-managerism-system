@@ -1,7 +1,6 @@
 import UsuarioService from "../services/Usuario.service.js";
 
 class UsuarioController {
-
   async criar(req, res) {
     try {
       const novo = await UsuarioService.criarUsuario(req.body);
@@ -29,7 +28,7 @@ class UsuarioController {
     try {
       const atualizado = await UsuarioService.atualizar(
         req.params.id,
-        req.body
+        req.body,
       );
       return res.json(atualizado);
     } catch (e) {

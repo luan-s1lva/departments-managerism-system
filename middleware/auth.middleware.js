@@ -4,7 +4,8 @@ import { JWTSECRET } from "../routes/auth.routes.js";
 const authMiddleware = (req, res, next) => {
   const tokenCompleto = req.headers.authorization;
 
-  if (!tokenCompleto) return res.status(401).json({ mensagem: "Token não fornecido" });
+  if (!tokenCompleto)
+    return res.status(401).json({ mensagem: "Token não fornecido" });
 
   const tokenIncompleto = tokenCompleto.split(" ");
   if (tokenIncompleto.length !== 2)
@@ -24,4 +25,4 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
-export default authMiddleware
+export default authMiddleware;

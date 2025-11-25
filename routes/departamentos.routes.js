@@ -1,142 +1,195 @@
 import db from "../config/dbConfig.js";
 import { Router } from "express";
-import { deptCreationRules, deptRemoveRules, deptUpdateRulesPATCH, deptUpdateRulesPUT } from "../validators/departamentos.validator.js";
+import {
+  deptCreationRules,
+  deptRemoveRules,
+  deptUpdateRulesPATCH,
+  deptUpdateRulesPUT,
+} from "../validators/departamentos.validator.js";
 import { resultadosValidacao } from "../middleware/validation.middleware.js";
-import { checkRole } from "../middleware/permission.middleware.js"
+import { checkRole } from "../middleware/permission.middleware.js";
 
 const roteadorDepartamentos = Router();
 
-roteadorDepartamentos.post("/salvar", deptCreationRules(), checkRole("admin"), resultadosValidacao, async (req, res) => {
-  try {
-    const {
-      nome,
-      tipo,
-      descricao,
-      dataCriacao,
-      idResponsavel,
-      status,
-      quantidadeFuncionarios,
-    } = req.body;
+roteadorDepartamentos.post(
+  "/salvar",
+  deptCreationRules(),
+  checkRole("admin"),
+  resultadosValidacao,
+  async (req, res) => {
+    try {
+      const {
+        nome,
+        tipo,
+        descricao,
+        dataCriacao,
+        idResponsavel,
+        status,
+        quantidadeFuncionarios,
+      } = req.body;
 
-    const departamentoExiste = db.data.departamentos.find(
-      (d) => d.nome === nome,
-    );
-    if (departamentoExiste) {
-      return res.status(409).json({ message: "Este departamento já existe." });
+      const departamentoExiste = db.data.departamentos.find(
+        (d) => d.nome === nome,
+      );
+      if (departamentoExiste) {
+        return res
+          .status(409)
+          .json({ message: "Este departamento já existe." });
+      }
+
+      const novoDepartamento = {
+        id:
+          (db.data.departamentos.length > 0
+            ? Math.max(...db.data.departamentos.map((d) => d.id))
+            : 0) + 1,
+        nome,
+        tipo,
+        descricao,
+        dataCriacao,
+        idResponsavel,
+        status,
+        quantidadeFuncionarios,
+      };
+
+      db.data.departamentos.push(novoDepartamento);
+
+      await db.write();
+
+      const resposta = { ...novoDepartamento };
+
+      res.status(201).json(resposta);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro ao processar a requisição." });
     }
+  },
+);
 
-    const novoDepartamento = {
-      id:
-        (db.data.departamentos.length > 0
-          ? Math.max(...db.data.departamentos.map((d) => d.id))
-          : 0) + 1,
-      nome,
-      tipo,
-      descricao,
-      dataCriacao,
-      idResponsavel,
-      status,
-      quantidadeFuncionarios,
-    };
+roteadorDepartamentos.put(
+  "/editar/:id",
+  deptUpdateRulesPUT(),
+  checkRole("admin"),
+  resultadosValidacao,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        nome,
+        tipo,
+        descricao,
+        dataCriacao,
+        idResponsavel,
+        status,
+        quantidadeFuncionarios,
+      } = req.body;
 
-    db.data.departamentos.push(novoDepartamento);
+      const departamentoExiste = db.data.departamentos.find(
+        (d) => d.id === parseInt(id, 10),
+      );
+      if (!departamentoExiste) {
+        return res
+          .status(409)
+          .json({ message: "Este departamento não existe." });
+      }
 
-    await db.write();
+      ((departamentoExiste.nome = nome),
+        (departamentoExiste.tipo = tipo),
+        (departamentoExiste.descricao = descricao),
+        (departamentoExiste.dataCriacao = dataCriacao),
+        (departamentoExiste.idResponsavel = idResponsavel),
+        (departamentoExiste.status = status),
+        (departamentoExiste.quantidadeFuncionarios = quantidadeFuncionarios),
+        await db.write());
 
-    const resposta = { ...novoDepartamento };
+      const resposta = departamentoExiste;
 
-    res.status(201).json(resposta);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erro ao processar a requisição." });
-  }
-});
-
-roteadorDepartamentos.put("/editar/:id", deptUpdateRulesPUT(), checkRole("admin"), resultadosValidacao, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nome, tipo, descricao, dataCriacao, idResponsavel, status, quantidadeFuncionarios } =
-      req.body;
-
-    const departamentoExiste = db.data.departamentos.find(
-      (d) => d.id === parseInt(id, 10),
-    );
-    if (!departamentoExiste) {
-      return res.status(409).json({ message: "Este departamento não existe." });
+      res.status(200).json(resposta);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro ao processar a requisição." });
     }
+  },
+);
 
-    ((departamentoExiste.nome = nome),
-      (departamentoExiste.tipo = tipo),
-      (departamentoExiste.descricao = descricao),
-      (departamentoExiste.dataCriacao = dataCriacao),
-      (departamentoExiste.idResponsavel = idResponsavel),
-      (departamentoExiste.status = status),
-      (departamentoExiste.quantidadeFuncionarios = quantidadeFuncionarios),
-      await db.write());
+roteadorDepartamentos.patch(
+  "/editar/:id",
+  deptUpdateRulesPATCH(),
+  checkRole("admin"),
+  resultadosValidacao,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        nome,
+        tipo,
+        descricao,
+        dataCriacao,
+        idResponsavel,
+        status,
+        quantidadeFuncionarios,
+      } = req.body;
 
-    const resposta = departamentoExiste;
+      const departamentoExiste = db.data.departamentos.find(
+        (d) => d.id === parseInt(id, 10),
+      );
+      if (!departamentoExiste) {
+        return res
+          .status(409)
+          .json({ message: "Este departamento não existe." });
+      }
 
-    res.status(200).json(resposta);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erro ao processar a requisição." });
-  }
-});
+      ((departamentoExiste.nome = nome),
+        (departamentoExiste.tipo = tipo),
+        (departamentoExiste.descricao = descricao),
+        (departamentoExiste.dataCriacao = dataCriacao),
+        (departamentoExiste.idResponsavel = idResponsavel),
+        (departamentoExiste.status = status),
+        (departamentoExiste.quantidadeFuncionarios = quantidadeFuncionarios),
+        await db.write());
 
-roteadorDepartamentos.patch("/editar/:id", deptUpdateRulesPATCH(), checkRole("admin"), resultadosValidacao, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nome, tipo, descricao, dataCriacao, idResponsavel, status, quantidadeFuncionarios } =
-      req.body;
+      const resposta = departamentoExiste;
 
-    const departamentoExiste = db.data.departamentos.find(
-      (d) => d.id === parseInt(id, 10),
-    );
-    if (!departamentoExiste) {
-      return res.status(409).json({ message: "Este departamento não existe." });
+      res.status(200).json(resposta);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro ao processar a requisição." });
     }
+  },
+);
 
-    ((departamentoExiste.nome = nome),
-      (departamentoExiste.tipo = tipo),
-      (departamentoExiste.descricao = descricao),
-      (departamentoExiste.dataCriacao = dataCriacao),
-      (departamentoExiste.idResponsavel = idResponsavel),
-      (departamentoExiste.status = status),
-      (departamentoExiste.quantidadeFuncionarios = quantidadeFuncionarios),
-      await db.write());
+roteadorDepartamentos.delete(
+  "/deletar/:id",
+  deptRemoveRules(),
+  checkRole("admin"),
+  resultadosValidacao,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
 
-    const resposta = departamentoExiste;
+      const departamentoExiste = db.data.departamentos.find(
+        (d) => d.id === parseInt(id, 10),
+      );
+      if (!departamentoExiste) {
+        return res
+          .status(409)
+          .json({ message: "Este departamento não existe." });
+      }
 
-    res.status(200).json(resposta);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erro ao processar a requisição." });
-  }
-});
+      const index = db.data.departamentos.findIndex(
+        (d) => d.id === parseInt(id),
+      );
 
-roteadorDepartamentos.delete("/deletar/:id", deptRemoveRules(), checkRole("admin"), resultadosValidacao, async (req, res) => {
-  try {
-    const { id } = req.params;
+      db.data.departamentos.splice(index, 1);
 
-    const departamentoExiste = db.data.departamentos.find(
-      (d) => d.id === parseInt(id, 10),
-    );
-    if (!departamentoExiste) {
-      return res.status(409).json({ message: "Este departamento não existe." });
+      await db.write();
+
+      res.status(200).json({ mensagem: "Departamento removido com sucesso" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro ao processar a requisição." });
     }
-
-    const index = db.data.departamentos.findIndex((d) => d.id === parseInt(id));
-
-    db.data.departamentos.splice(index, 1);
-
-    await db.write();
-
-    res.status(200).json({ mensagem: "Departamento removido com sucesso" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erro ao processar a requisição." });
-  }
-});
+  },
+);
 
 roteadorDepartamentos.get("/buscar/:termoBusca", async (req, res) => {
   try {

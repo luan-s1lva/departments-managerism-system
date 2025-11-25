@@ -17,7 +17,7 @@ export const userLoginRules = () => {
       .isString()
       .withMessage("Senha inválida")
       .notEmpty()
-      .withMessage("O campo senha é obrigatório")
+      .withMessage("O campo senha é obrigatório"),
   ];
 };
 
@@ -25,75 +25,73 @@ export const userLoginRules = () => {
 export const userCreationRules = () => {
   return [
     body("nome")
-      .notEmpty().withMessage("O campo nome é obrigatório")
-      .isString().withMessage("Nome inválido"),
+      .notEmpty()
+      .withMessage("O campo nome é obrigatório")
+      .isString()
+      .withMessage("Nome inválido"),
 
     body("email")
-      .isEmail().withMessage("Email inválido")
-      .notEmpty().withMessage("O campo email é obrigatório"),
+      .isEmail()
+      .withMessage("Email inválido")
+      .notEmpty()
+      .withMessage("O campo email é obrigatório"),
 
     body("password")
-      .isString().withMessage("Senha inválida")
-      .notEmpty().withMessage("O campo senha é obrigatório")
+      .isString()
+      .withMessage("Senha inválida")
+      .notEmpty()
+      .withMessage("O campo senha é obrigatório"),
   ];
 };
 
 // REGRAS DE ATUALIZAÇÃO COMPLETA (PUT)
 export const userUpdateRulesPUT = () => {
   return [
-    param("id")
-      .custom(isObjectId)
-      .withMessage("ID inválido"),
+    param("id").custom(isObjectId).withMessage("ID inválido"),
 
     body("nome")
-      .notEmpty().withMessage("O campo nome é obrigatório")
-      .isString().withMessage("Nome inválido"),
+      .notEmpty()
+      .withMessage("O campo nome é obrigatório")
+      .isString()
+      .withMessage("Nome inválido"),
 
     body("email")
-      .isEmail().withMessage("Email inválido")
-      .notEmpty().withMessage("O campo email é obrigatório"),
+      .isEmail()
+      .withMessage("Email inválido")
+      .notEmpty()
+      .withMessage("O campo email é obrigatório"),
 
     body("password")
-      .isString().withMessage("Senha inválida")
-      .notEmpty().withMessage("O campo senha é obrigatório"),
+      .isString()
+      .withMessage("Senha inválida")
+      .notEmpty()
+      .withMessage("O campo senha é obrigatório"),
 
     body("idDepartamento")
       .custom(isObjectId)
-      .withMessage("ID de departamento inválido")
+      .withMessage("ID de departamento inválido"),
   ];
 };
 
 // REGRAS DE ATUALIZAÇÃO PARCIAL (PATCH)
 export const userUpdateRulesPATCH = () => {
   return [
-    param("id")
-      .custom(isObjectId)
-      .withMessage("ID inválido"),
+    param("id").custom(isObjectId).withMessage("ID inválido"),
 
-    body("nome")
-      .optional()
-      .isString().withMessage("Nome inválido"),
+    body("nome").optional().isString().withMessage("Nome inválido"),
 
-    body("email")
-      .optional()
-      .isEmail().withMessage("Email inválido"),
+    body("email").optional().isEmail().withMessage("Email inválido"),
 
-    body("password")
-      .optional()
-      .isString().withMessage("Senha inválida"),
+    body("password").optional().isString().withMessage("Senha inválida"),
 
     body("idDepartamento")
       .optional()
       .custom(isObjectId)
-      .withMessage("ID de departamento inválido")
+      .withMessage("ID de departamento inválido"),
   ];
 };
 
 // REGRAS DE DELETAR USUÁRIOS
 export const userRemoveRules = () => {
-  return [
-    param("id")
-      .custom(isObjectId)
-      .withMessage("ID inválido")
-  ];
+  return [param("id").custom(isObjectId).withMessage("ID inválido")];
 };
