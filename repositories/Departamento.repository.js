@@ -8,7 +8,7 @@ class DepartamentoRepository {
     return await DepartamentoModel.find();
   }
   async buscarPorId(id) {
-    return await DepartamentoModel.findOne({ id });
+    return await DepartamentoModel.findById(id).populate("idResponsavel");
   }
   async buscarPorNome(nome) {
     return await DepartamentoModel.findOne({ nome });

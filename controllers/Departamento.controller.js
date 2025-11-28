@@ -11,13 +11,28 @@ class DepartamentoController {
   }
 
   async listar(req, res) {
-    const lista = await DepartamentoService.listar();
-    return lista;
+    try {
+      const lista = await DepartamentoService.listar();
+      return res.json(lista);
+    } catch (e) {
+      return res.status(500).json({ erro: e.message });
+    }
+  }
+
+  async buscarPorId(req, res) {
+    try {
+      const { id } = req.params;
+      const dept = await DepartamentoService.buscarPorId(id);
+      return res.json(dept);
+    } catch (e) {
+      return res.status(404).json({ erro: e.message });
+    }
   }
 
   async buscarPorNome(req, res) {
     try {
-      const dept = await DepartamentoService.buscarPorNome(req.body.nome);
+      const termo = req.params.termoBusca;
+      const dept = await DepartamentoService.buscarPorNome(termo);
       return res.json(dept);
     } catch (e) {
       return res.status(400).json({ erro: e.message });
@@ -26,7 +41,8 @@ class DepartamentoController {
 
   async buscarPorStatus(req, res) {
     try {
-      const dept = await DepartamentoService.buscarPorStatus(req.body.status);
+      const termo = req.params.termoBusca;
+      const dept = await DepartamentoService.buscarPorStatus(termo);
       return res.json(dept);
     } catch (e) {
       return res.status(400).json({ erro: e.message });

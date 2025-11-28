@@ -28,6 +28,12 @@ class UsuarioService {
     return await UsuarioRepository.buscarTodos();
   }
 
+  async listarNaPag() {
+    const usuariosCadastrados = await UsuarioRepository.buscarTodos();
+    const usuarioDtos = usuariosCadastrados.map((user) => new UsuarioDTO(user));
+    return usuarioDtos;
+  }
+
   async buscar(id) {
     const usuario = await UsuarioRepository.buscarPorId(id);
     if (!usuario) throw new Error("Usuário não encontrado");
@@ -47,7 +53,7 @@ class UsuarioService {
       await usuario.save();
       return await UsuarioRepository.buscarPorId(id);
     } else {
-      return await UsuarioRepository.atualizar(id, dto);
+      return await UsuarioRepository.atualizarDados(id, dto);
     }
   }
 

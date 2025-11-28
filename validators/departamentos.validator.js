@@ -1,4 +1,8 @@
 import { body, param } from "express-validator";
+import mongoose from "mongoose";
+
+// Função para validar ObjectId do Mongo
+const isObjectId = (value) => mongoose.Types.ObjectId.isValid(value);
 
 // REGRAS DE CRIAÇÃO DE DEPARTAMENTOS
 export const deptCreationRules = () => {
@@ -24,8 +28,6 @@ export const deptCreationRules = () => {
       .notEmpty()
       .withMessage("O campo dataCriacao é obrigatório"),
     body("idResponsavel")
-      .isInt()
-      .withMessage("Tente outro")
       .notEmpty()
       .withMessage("O campo idResponsavel é obrigatório"),
     body("quantidadeFuncionarios")
@@ -44,11 +46,7 @@ export const deptCreationRules = () => {
 // REGRAS DE ATUALIZAÇÃO DE DEPARTAMENTOS
 export const deptUpdateRulesPUT = () => {
   return [
-    param("id")
-      .isInt()
-      .withMessage("Tente outro")
-      .notEmpty()
-      .withMessage("O campo id é obrigatório"),
+    param("id").custom(isObjectId).withMessage("ID inválido"),
     body("nome")
       .isString()
       .withMessage("Tente outro")
@@ -70,10 +68,8 @@ export const deptUpdateRulesPUT = () => {
       .notEmpty()
       .withMessage("O campo dataCriacao é obrigatório"),
     body("idResponsavel")
-      .isInt()
-      .withMessage("Tente outro")
-      .notEmpty()
-      .withMessage("O campo idResponsavel é obrigatório"),
+      .custom(isObjectId)
+      .withMessage("ID de departamento inválido"),
     body("quantidadeFuncionarios")
       .isInt()
       .withMessage("Tente outro")
@@ -89,11 +85,7 @@ export const deptUpdateRulesPUT = () => {
 
 export const deptUpdateRulesPATCH = () => {
   return [
-    param("id")
-      .isInt()
-      .withMessage("Tente outro")
-      .optional()
-      .withMessage("O campo id é obrigatório"),
+    param("id").custom(isObjectId).withMessage("ID inválido"),
     body("nome")
       .isString()
       .withMessage("Tente outro")
@@ -115,10 +107,9 @@ export const deptUpdateRulesPATCH = () => {
       .optional()
       .withMessage("O campo dataCriacao é obrigatório"),
     body("idResponsavel")
-      .isInt()
-      .withMessage("Tente outro")
       .optional()
-      .withMessage("O campo idResponsavel é obrigatório"),
+      .custom(isObjectId)
+      .withMessage("ID de responsavel inválido"),
     body("quantidadeFuncionarios")
       .isInt()
       .withMessage("Tente outro")
@@ -134,11 +125,5 @@ export const deptUpdateRulesPATCH = () => {
 
 // REGRAS DE DELETAR DEPARTAMENTOS
 export const deptRemoveRules = () => {
-  return [
-    param("id")
-      .isInt()
-      .withMessage("Tente outro")
-      .notEmpty()
-      .withMessage("O campo id é obrigatório"),
-  ];
+  return [param("id").custom(isObjectId).withMessage("ID inválido")];
 };

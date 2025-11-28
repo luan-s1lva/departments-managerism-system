@@ -12,6 +12,26 @@ import authMiddleware from "../middleware/auth.middleware.js";
 
 const roteadorDepartamentos = Router();
 
+roteadorDepartamentos.get(
+  "/buscar/nome/:termoBusca",
+  authMiddleware,
+  (req, res) => DepartamentoController.buscarPorNome(req, res),
+);
+
+roteadorDepartamentos.get(
+  "/buscar/status/:termoBusca",
+  authMiddleware,
+  (req, res) => DepartamentoController.buscarPorStatus(req, res),
+);
+
+roteadorDepartamentos.get("/buscar", authMiddleware, (req, res) =>
+  DepartamentoController.listar(req, res),
+);
+
+roteadorDepartamentos.get("/buscar/:id", (req, res) =>
+  DepartamentoController.buscarPorId(req, res),
+);
+
 roteadorDepartamentos.post(
   "/salvar",
   authMiddleware,
@@ -23,6 +43,7 @@ roteadorDepartamentos.post(
 
 roteadorDepartamentos.put(
   "/editar/:id",
+  authMiddleware,
   deptUpdateRulesPUT(),
   checkRole("admin"),
   resultadosValidacao,
@@ -31,6 +52,7 @@ roteadorDepartamentos.put(
 
 roteadorDepartamentos.patch(
   "/editar/:id",
+  authMiddleware,
   deptUpdateRulesPATCH(),
   checkRole("admin"),
   resultadosValidacao,
@@ -39,28 +61,11 @@ roteadorDepartamentos.patch(
 
 roteadorDepartamentos.delete(
   "/deletar/:id",
-  deptRemoveRules(),
+  authMiddleware,
   checkRole("admin"),
+  deptRemoveRules(),
   resultadosValidacao,
-  (req) => DepartamentoController.deletar(req),
-);
-
-roteadorDepartamentos.get(
-  "/buscar",
-  authMiddleware,
-  (req) => DepartamentoController.listar(),
-);
-
-roteadorDepartamentos.get(
-  "/buscar/nome/:termoBusca",
-  authMiddleware,
-  (req, res) => DepartamentoController.buscarPorNome(req.body.nome),
-);
-
-roteadorDepartamentos.get(
-  "/buscar/status/:termoBusca",
-  authMiddleware,
-  (req, res) => DepartamentoController.buscarPorStatus(req.body.status),
+  (req, res) => DepartamentoController.deletar(req, res),
 );
 
 export default roteadorDepartamentos;

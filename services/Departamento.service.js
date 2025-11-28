@@ -27,6 +27,12 @@ class DepartamentoService {
     return await DepartamentoRepository.buscarTodos();
   }
 
+  async buscarPorId(id) {
+    const dept = await DepartamentoRepository.buscarPorId(id);
+    if (!dept) throw new Error("Departamento não encontrado");
+    return dept;
+  }
+
   async buscarPorNome(nome) {
     const dept = await DepartamentoRepository.buscarPorNome(nome);
     if (!dept) throw new Error("Departamento não encontrado");
@@ -46,18 +52,13 @@ class DepartamentoService {
   }
 
   async atualizar(id, dados) {
-    const dept = await DepartamentoModel.findById(id);
+    const atualizado = await DepartamentoRepository.atualizarDados(id, dados);
 
-    dept.nome = dados.nome;
-    dept.tipo = dados.tipo;
-    dept.quantidadeFuncionarios = dados.quantidadeFuncionarios;
-    dept.status = dados.status;
-    dept.descricao = dados.descricao;
-    dept.dataCriacao = dados.dataCriacao;
+    if (!atualizado) {
+      throw new Error("Departamento não encontrado");
+    }
 
-    await dept.save();
-
-    return await UsuarioRepository.buscarPorId(id);
+    return atualizado;
   }
 
   async deletar(id) {

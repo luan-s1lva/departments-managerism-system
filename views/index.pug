@@ -1,0 +1,158 @@
+doctype html
+html(lang="pt-BR")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Lista de Usuários
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css")
+
+  body.bg-light
+    .container.py-5
+      h1.text-center.mb-4 Lista de Usuários
+
+      .row
+        each usuario in users
+          // Lógica para extrair o ID corretamente, seja objeto ou string
+          - var deptId = null
+          - var deptNome = "Sem nome"
+          
+          if usuario.idDepartamento
+             if usuario.idDepartamento._id
+                - deptId = usuario.idDepartamento._id
+                - deptNome = usuario.idDepartamento.nome
+             else
+                - deptId = usuario.idDepartamento
+                - deptNome = "ID: " + usuario.idDepartamento
+
+          .col-md-4.mb-4
+            .card.shadow-sm.h-100
+              .card-body
+                h5.card-title= usuario.nome
+                
+                p.card-text.mb-1 #[strong Email:] #{usuario.email}
+                p.card-text.mb-2
+                  strong Função: 
+                  span.badge.bg-primary.ms-1= usuario.role
+
+                if deptId
+                  p.card-text
+                    strong Departamento: 
+                    | #{deptNome}
+                  
+                  // Botão com o ID
+                  button.btn.btn-outline-primary.btn-sm.mt-2.btnDetalhes(
+                    type="button"
+                    data-id=deptId
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalDepto"
+                  ) Ver Departamento
+                else
+                  p.text-muted.mt-3 Sem departamento vinculado
+                  button.btn.btn-secondary.btn-sm.mt-2(disabled) Indisponível
+
+    // 🔹 MODAL DETALHES
+    div.modal.fade#modalDepto(tabindex="-1" aria-hidden="true")
+      div.modal-dialog.modal-dialog-centered
+        div.modal-content
+          div.modal-header
+            h5.modal-title Detalhes do Departamento
+            button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+
+          div.modal-body
+            ul.list-group.list-group-flush
+              li.list-group-item #[strong Nome:] #[span#dept-nome]
+              li.list-group-item #[strong Tipo:] #[span#dept-tipo]
+              li.list-group-item #[strong Descrição:] #[span#dept-desc]
+              li.list-group-item #[strong Criado em:] #[span#dept-data]
+              li.list-group-item #[strong Responsável:] #[span#dept-resp]
+              li.list-group-item #[strong Funcionários:] #[span#dept-func]
+              li.list-group-item #[strong Status:] #[span#dept-status]
+
+          div.modal-footer
+            button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Fechar
+
+    // 🔹 SCRIPTS
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+    script.
+      document.addEventListener("DOMContentLoaded", () => {
+        const fields = {
+          nome: document.getElementById("dept-nome"),
+          tipo: document.getElementById("dept-tipo"),
+          desc: document.getElementById("dept-desc"),
+          data: document.getElementById("dept-data"),
+          resp: document.getElementById("dept-resp"),
+          func: document.getElementById("dept-func"),
+          status: document.getElementById("dept-status")
+        };
+
+        document.querySelectorAll(".btnDetalhes").forEach(btn => {
+          btn.addEventListener("click", async () => {
+            const id = btn.dataset.id;
+            
+            console.log("--- INICIANDO BUSCA ---");
+            console.log("1. ID capturado do botão:", id);
+
+            // Limpa visualmente
+            Object.values(fields).forEach(el => el.textContent = "Carregando...");
+            fields.status.innerHTML = "";
+
+            try {
+              if (!id) throw new Error("ID vazio ou indefinido no botão HTML");
+
+              // Adiciona timestamp para evitar cache do navegador
+              const url = `/api/departamentos/buscar/${id}?t=${new Date().getTime()}`;
+              console.log("2. URL da requisição:", url);
+
+              const res = await fetch(url);
+              console.log("3. Status da resposta HTTP:", res.status);
+
+              if (!res.ok) {
+                 const erroTexto = await res.text();
+                 console.error("4. Erro retornado pelo servidor:", erroTexto);
+                 throw new Error(`Erro na API: ${res.status}`);
+              }
+
+              const dept = await res.json();
+              console.log("5. JSON Recebido do Backend:", dept);
+
+              // Validação se veio objeto vazio
+              if(!dept) throw new Error("Backend retornou nulo");
+
+              // PREENCHIMENTO DOS DADOS
+              console.log("6. Preenchendo campos...");
+
+              fields.nome.textContent = dept.nome || "Vazio no banco";
+              fields.tipo.textContent = dept.tipo || "-";
+              fields.desc.textContent = dept.descricao || "-";
+              
+              fields.data.textContent = dept.dataCriacao 
+                ? new Date(dept.dataCriacao).toLocaleDateString('pt-BR') 
+                : "-";
+
+              // Lógica Responsável
+              let responsavelTexto = "Não definido";
+              if(dept.idResponsavel) {
+                  if(typeof dept.idResponsavel === 'object' && dept.idResponsavel.nome) {
+                      responsavelTexto = dept.idResponsavel.nome;
+                  } else if (typeof dept.idResponsavel === 'string') {
+                      responsavelTexto = "ID: " + dept.idResponsavel;
+                  }
+              }
+              fields.resp.textContent = responsavelTexto;
+
+              fields.func.textContent = dept.quantidadeFuncionarios || 0;
+              
+              fields.status.innerHTML = dept.status 
+                ? '<span class="badge bg-success">Ativo</span>' 
+                : '<span class="badge bg-danger">Inativo</span>';
+                
+              console.log("--- FINALIZADO COM SUCESSO ---");
+
+            } catch (error) {
+              console.error("ERRO CRÍTICO:", error);
+              fields.nome.textContent = "Erro";
+              fields.desc.textContent = "Verifique o console (F12)";
+            }
+          });
+        });
+      });
