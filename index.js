@@ -2,7 +2,7 @@ import express from "express";
 import { conectarMongo } from "./config/dbMongooseConfig.js";
 
 import usuariosRoutes from "./routes/usuarios.routes.js";
-// import departamentosRoutes from "./routes/departamentos.routes.js";
+import departamentosRoutes from "./routes/departamentos.routes.js";
 import loginRoutes from "./routes/auth.routes.js";
 
 const app = express();
@@ -18,7 +18,7 @@ conectarMongo();
 
 app.use("/api/auth", loginRoutes);
 app.use("/api/usuarios", usuariosRoutes);
-// app.use("/api/departamentos", departamentosRoutes);
+app.use("/api/departamentos", departamentosRoutes);
 
 // MIDDLEWARE DE TRATAMENTO DE ERRO 404
 app.use((req, res, next) => {

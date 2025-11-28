@@ -1,5 +1,5 @@
-import DepartamentoModel from "../models/Departamento.model";
-import DepartamentoRepository from "../repositories/Departamento.repository";
+import DepartamentoModel from "../models/Departamento.model.js";
+import DepartamentoRepository from "../repositories/Departamento.repository.js";
 
 class DepartamentoService {
   async criarDepartamento(dados) {
@@ -47,14 +47,14 @@ class DepartamentoService {
 
   async atualizar(id, dados) {
     const dept = await DepartamentoModel.findById(id);
-    
+
     dept.nome = dados.nome;
     dept.tipo = dados.tipo;
     dept.quantidadeFuncionarios = dados.quantidadeFuncionarios;
     dept.status = dados.status;
     dept.descricao = dados.descricao;
     dept.dataCriacao = dados.dataCriacao;
-    
+
     await dept.save();
 
     return await UsuarioRepository.buscarPorId(id);
