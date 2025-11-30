@@ -17,7 +17,7 @@ class DepartamentoRepository {
     return await DepartamentoModel.findOne({ tipo });
   }
   async buscarPorStatus(status) {
-    return await DepartamentoModel.findOne({ status });
+    return await DepartamentoModel.find({ status });
   }
   async atualizarDados(id, dados) {
     return await DepartamentoModel.findByIdAndUpdate(id, dados, {
