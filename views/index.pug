@@ -12,7 +12,6 @@ html(lang="pt-BR")
 
       .row
         each usuario in users
-          // Lógica para extrair o ID corretamente, seja objeto ou string
           - var deptId = null
           - var deptNome = "Sem nome"
           
@@ -39,7 +38,6 @@ html(lang="pt-BR")
                     strong Departamento: 
                     | #{deptNome}
                   
-                  // Botão com o ID
                   button.btn.btn-outline-primary.btn-sm.mt-2.btnDetalhes(
                     type="button"
                     data-id=deptId
@@ -50,7 +48,7 @@ html(lang="pt-BR")
                   p.text-muted.mt-3 Sem departamento vinculado
                   button.btn.btn-secondary.btn-sm.mt-2(disabled) Indisponível
 
-    // 🔹 MODAL DETALHES
+    // modal
     div.modal.fade#modalDepto(tabindex="-1" aria-hidden="true")
       div.modal-dialog.modal-dialog-centered
         div.modal-content
@@ -71,7 +69,6 @@ html(lang="pt-BR")
           div.modal-footer
             button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Fechar
 
-    // 🔹 SCRIPTS
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
     script.
       document.addEventListener("DOMContentLoaded", () => {
@@ -88,38 +85,28 @@ html(lang="pt-BR")
         document.querySelectorAll(".btnDetalhes").forEach(btn => {
           btn.addEventListener("click", async () => {
             const id = btn.dataset.id;
-            
-            console.log("--- INICIANDO BUSCA ---");
-            console.log("1. ID capturado do botão:", id);
-
-            // Limpa visualmente
+          
             Object.values(fields).forEach(el => el.textContent = "Carregando...");
             fields.status.innerHTML = "";
 
             try {
               if (!id) throw new Error("ID vazio ou indefinido no botão HTML");
 
-              // Adiciona timestamp para evitar cache do navegador
               const url = `/api/departamentos/buscar/${id}?t=${new Date().getTime()}`;
-              console.log("2. URL da requisição:", url);
 
               const res = await fetch(url);
-              console.log("3. Status da resposta HTTP:", res.status);
+
 
               if (!res.ok) {
                  const erroTexto = await res.text();
-                 console.error("4. Erro retornado pelo servidor:", erroTexto);
                  throw new Error(`Erro na API: ${res.status}`);
               }
 
               const dept = await res.json();
-              console.log("5. JSON Recebido do Backend:", dept);
 
-              // Validação se veio objeto vazio
               if(!dept) throw new Error("Backend retornou nulo");
 
               // PREENCHIMENTO DOS DADOS
-              console.log("6. Preenchendo campos...");
 
               fields.nome.textContent = dept.nome || "Vazio no banco";
               fields.tipo.textContent = dept.tipo || "-";
@@ -129,7 +116,6 @@ html(lang="pt-BR")
                 ? new Date(dept.dataCriacao).toLocaleDateString('pt-BR') 
                 : "-";
 
-              // Lógica Responsável
               let responsavelTexto = "Não definido";
               if(dept.idResponsavel) {
                   if(typeof dept.idResponsavel === 'object' && dept.idResponsavel.nome) {
@@ -146,12 +132,9 @@ html(lang="pt-BR")
                 ? '<span class="badge bg-success">Ativo</span>' 
                 : '<span class="badge bg-danger">Inativo</span>';
                 
-              console.log("--- FINALIZADO COM SUCESSO ---");
 
             } catch (error) {
-              console.error("ERRO CRÍTICO:", error);
-              fields.nome.textContent = "Erro";
-              fields.desc.textContent = "Verifique o console (F12)";
+              console.error("ERRO:", error);
             }
           });
         });
