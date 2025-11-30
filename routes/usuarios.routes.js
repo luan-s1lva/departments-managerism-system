@@ -42,7 +42,7 @@ roteadorUsuarios.put(
 
 roteadorUsuarios.patch(
   // atualizar uma parte
-  "/alterar/:id",
+  "/editar/:id",
   authMiddleware,
   checkRole("admin"),
   userUpdateRulesPATCH(),
